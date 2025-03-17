@@ -1,7 +1,7 @@
 # TypeScript Data Transformation and Validation
 
 This is a small project that deals with data manipulation (transformation & validation) of a JSON object that contains an array of complex objects.
-Comments have been added throughout the files to make it easier to understand where to edit sample/test case scenarios. You can play around with the `sample-data.ts` file and edit the `sampleData` array of objects to test different scenarios of invalid properties.
+Comments have been added throughout the files to make it easier to understand where to edit sample/test case scenarios. You can play around with the `sample-data.ts` file and edit the objects in the `sampleData` array to test different scenarios of invalid properties.
 
 ## Features
 
