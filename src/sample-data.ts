@@ -36,6 +36,13 @@ export const sampleData = [
     status: "active",
     tags: ["support"],
   },
+  {
+    id: 6,
+    name: "Charlie Green",
+    email: "charlie-example.com",
+    status: "active",
+    tags: ["support"],
+  },
 ];
 
 const processedData = processUserData(sampleData);

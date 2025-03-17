@@ -76,7 +76,7 @@ describe("processUserData", () => {
         const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation();
         const result = (0, data_transformer_1.processUserData)(mixedUsers);
         expect(result).toHaveLength(1);
-        // The valid user should be the first one with invalid tags filtered out
+        // the valid user should be the first one with invalid tags filtered out
         expect(result[0].id).toBe(1);
         expect(result[0].tags).toEqual(["developer", "typescript"]);
         expect(consoleWarnSpy).toHaveBeenCalled();
