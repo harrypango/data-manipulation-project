@@ -9,11 +9,11 @@ interface User {
 
 // Interface representing any object that might be a User but needs validation
 interface UnvalidatedUser {
-  id: any;
-  name: any;
-  email: any;
-  status: any;
-  tags: any;
+  id: unknown;
+  name: unknown;
+  email: unknown;
+  status: unknown;
+  tags: unknown;
 }
 
 type ValidationError = {
@@ -27,12 +27,12 @@ function isString(value: any): value is string {
 }
 
 // check if a value is a number
-function isNumber(value: any): value is number {
+function isNumber(value: unknown): value is number {
   return typeof value === "number" && !isNaN(value);
 }
 
 // function to validate and filter tags
-function validateTags(tags: any): string[] {
+function validateTags(tags: unknown): string[] {
   if (!Array.isArray(tags)) {
     return [];
   }
@@ -40,7 +40,7 @@ function validateTags(tags: any): string[] {
 }
 
 // function to validate status
-function isValidStatus(status: any): status is "active" | "inactive" {
+function isValidStatus(status: unknown): status is "active" | "inactive" {
   return status === "active" || status === "inactive";
 }
 
@@ -51,7 +51,7 @@ function isValidEmail(email: string): boolean {
 }
 
 // Main function to process and validate user data
-function processUserData(inputData: any[]): User[] {
+function processUserData(inputData: unknown[]): User[] {
   const validUsers: User[] = [];
   const validationErrors: ValidationError[] = [];
 
@@ -62,65 +62,73 @@ function processUserData(inputData: any[]): User[] {
 
   inputData.forEach((userData, index) => {
     try {
-      if (!userData || typeof userData !== "object") {
+      if (
+        !userData ||
+        typeof userData !== "object" ||
+        Array.isArray(userData)
+      ) {
         validationErrors.push({
-          object: userData,
+          object: userData as Partial<UnvalidatedUser>,
           reason: "Input is not an object",
         });
         return; // skip to next iteration
       }
 
+      const user = userData as UnvalidatedUser;
+
       // extract and validate id
-      if (!isNumber(userData.id)) {
+      if (!isNumber(user.id)) {
         validationErrors.push({
-          object: userData,
-          reason: `Invalid or missing 'id' property: expected number, got ${typeof userData.id}`,
+          object: user,
+          reason: `Invalid or missing 'id' property: expected number, got ${typeof user.id}`,
         });
         return;
       }
 
       // extract and validate name
-      if (!isString(userData.name)) {
+      if (!isString(user.name)) {
         validationErrors.push({
-          object: userData,
-          reason: `Invalid or missing 'name' property: expected string, got ${typeof userData.name}`,
+          object: user,
+          reason: `Invalid or missing 'name' property: expected string, got ${typeof user.name}`,
         });
         return;
       }
 
       // extract and validate email
-      if (!isString(userData.email)) {
+      if (!isString(user.email)) {
         validationErrors.push({
-          object: userData,
-          reason: `Invalid or missing 'email' property: expected string, got ${typeof userData.email}`,
+          object: user,
+          reason: `Invalid or missing 'email' property: expected string, got ${typeof user.email}`,
         });
         return;
       }
 
       // email format validation
-      if (!isValidEmail(userData.email)) {
+      if (!isValidEmail(user.email)) {
         validationErrors.push({
-          object: userData,
-          reason: `Invalid email format: ${userData.email}`,
+          object: user,
+          reason: `Invalid email format: ${user.email}`,
         });
         return;
       }
 
       // extract and validate status
-      if (!isValidStatus(userData.status)) {
+      if (!isValidStatus(user.status)) {
         validationErrors.push({
-          object: userData,
-          reason: `Invalid or missing 'status' property: expected 'active' or 'inactive', got ${userData.status}`,
+          object: user,
+          reason: `Invalid or missing 'status' property: expected 'active' or 'inactive', got ${String(
+            user.status
+          )}`,
         });
         return;
       }
 
       // validate and filter tags
-      const validatedTags = validateTags(userData.tags);
+      const validatedTags = validateTags(user.tags);
 
       if (
-        Array.isArray(userData.tags) &&
-        validatedTags.length !== userData.tags.length
+        Array.isArray(user.tags) &&
+        validatedTags.length !== user.tags.length
       ) {
         console.warn(
           `Object at index ${index} had invalid tags that were filtered out`
@@ -129,10 +137,10 @@ function processUserData(inputData: any[]): User[] {
 
       // create validated user object
       const validUser: User = {
-        id: userData.id,
-        name: userData.name,
-        email: userData.email,
-        status: userData.status,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        status: user.status,
         tags: validatedTags,
       };
 
@@ -140,7 +148,7 @@ function processUserData(inputData: any[]): User[] {
     } catch (error) {
       // handle any unexpected errors during processing
       validationErrors.push({
-        object: userData,
+        object: userData as Partial<UnvalidatedUser>,
         reason: `Unexpected error: ${
           error instanceof Error ? error.message : String(error)
         }`,
