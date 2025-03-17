@@ -57,8 +57,6 @@ const mixedUsers = [
   {}, // missing all required fields
 ];
 
-// different test case scenarios
-
 describe("processUserData", () => {
   // test 1 - valid data processing
   test("should process valid user data correctly", () => {

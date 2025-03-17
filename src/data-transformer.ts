@@ -16,7 +16,6 @@ interface UnvalidatedUser {
   tags: any;
 }
 
-// define validation error types
 type ValidationError = {
   object: Partial<UnvalidatedUser>;
   reason: string;
@@ -56,16 +55,13 @@ function processUserData(inputData: any[]): User[] {
   const validUsers: User[] = [];
   const validationErrors: ValidationError[] = [];
 
-  // check if inputData is an array
   if (!Array.isArray(inputData)) {
     console.error("Input is not an array");
     return [];
   }
 
-  // process each object in the array
   inputData.forEach((userData, index) => {
     try {
-      // check if userData is an object
       if (!userData || typeof userData !== "object") {
         validationErrors.push({
           object: userData,
@@ -122,7 +118,6 @@ function processUserData(inputData: any[]): User[] {
       // validate and filter tags
       const validatedTags = validateTags(userData.tags);
 
-      // if original tags array contained non-string values, log a warning but dont reject the object
       if (
         Array.isArray(userData.tags) &&
         validatedTags.length !== userData.tags.length
